@@ -15,10 +15,14 @@ public class Quiz {
 	static boolean hardExecuted = false;
 	static boolean isValid = true;
 	static String nickname = null;
+	static boolean userCreated = false;
 
 	public static void main(String[] args) {
 		createNewUser();
+		if(userCreated)
 		menu();
+		else
+			System.out.println("First, you need to create user.");
 
 	}
 
@@ -28,14 +32,14 @@ public class Quiz {
 		System.out.println("******************************************\n");
 		System.out.println("Choose the difficulty level:\n" + "1. Easy\n" + "2. Medium\n" + "3. Hard\n"
 				+ "******************************************\n\nMORE OPTIONS\n\n4. Create new user\n"
-				+ "5. Print all users\n6. User details");
+				+ "5. Print all users\n6. User details\n7. High Scores");
 		System.out.println("0. EXIT");
 		int i = -1;
 		do {
 			try {
 				userChoose = input.nextInt();
 				if (userChoose != 1 && userChoose != 2 && userChoose != 3 && userChoose != 4 && userChoose != 5
-						&& userChoose != 6 && userChoose != 0) {
+						&& userChoose != 6 && userChoose != 7 && userChoose != 0) {
 					throw new InputMismatchException();
 				} else {
 					i = 0;
@@ -64,6 +68,9 @@ public class Quiz {
 			else
 				System.out.print("You have already played on this level!");
 			break;
+		case 3:
+			printScoreList();
+			break;
 
 		case 4:
 			createNewUser();
@@ -77,18 +84,34 @@ public class Quiz {
 		case 6:
 			userDetails(numberOfPoints);
 			break;
+		case 7:
+			printScoreList();
+			break;
 		}
 
 	}
 
+	@SuppressWarnings("static-access")
 	public static void userDetails(int score) {
 		User user = new User();
+		boolean valid = true;
 		System.out.println("Please choose one of these: ");
 		user.printAllUsers();
+		while(valid){
 		String nick = input.next();
 		if (user.userIsValid(nick)) {
 			user.printUserDetails(nick);
+			valid = false;
+		}else{
+			System.out.println("Wrong input, try again: ");
+			input.nextLine();
 		}
+		}
+		menu();
+	}
+	
+	public static void printScoreList(){
+		User.scoreList();
 		menu();
 	}
 
@@ -106,9 +129,11 @@ public class Quiz {
 		System.out.println("Please enter your nickname: ");
 		nickname = input.next();
 		while (valid) {
-			if (!User.userIsValid(nickname)) {
+			if (!User.userIsValid(nickname) && User.nicknameValid(nickname)) {
+				@SuppressWarnings("unused")
 				User user = new User(nickname, numberOfPoints);
 				valid = false;
+				userCreated = true;
 			} else {
 				System.out.println("Try another nickname: ");
 				nickname = input.next();
@@ -116,9 +141,32 @@ public class Quiz {
 		}
 
 	}
+	
+	public static void printScore(int score) {
+
+		if (score <= 10) {
+			System.out.println("Next time, give your best..");
+			System.out.println("TOTAL SCORE: " + score);
+		} else if (score >= 10 && score < 20) {
+			System.out.println("You can do it better!");
+			System.out.println("TOTAL SCORE: " + score);
+		} else if (score >= 30 && score < 40) {
+			System.out.println("Almost perfect!");
+			System.out.println("TOTAL SCORE: " + score);
+		} else if (score >= 40 && score < 50) {
+			System.out.println("WELL DONE!");
+			System.out.println("TOTAL SCORE: " + score);
+		} else if (score == 50) {
+			System.out.println("YOU ARE GENIUS!");
+			System.out.println("TOTAL SCORE:  " + score);
+		} else if(score > 50){
+			System.out.println("TOTAL SCORE: " + score);
+		}
+
+	}
 
 	public static void easy() {
-		User user = new User();
+
 		correctAnswers.clear();
 		incorrectAnswers.clear();
 		numberOfPointsOnLevel = 0;
@@ -286,7 +334,7 @@ public class Quiz {
 		System.out.println("You got " + correctAnswers.size() + " correct answers and " + incorrectAnswers.size()
 				+ " incorrect answers.");
 		System.out.println("POINTS ON THIS LEVEL: " + numberOfPointsOnLevel);
-		user.printScore(numberOfPoints);
+		printScore(numberOfPoints);
 		System.out.println("CORRECT ANSWERS: ");
 		for (i = 0; i < correctAnswers.size(); i++) {
 			System.out.println(correctAnswers.get(i));
@@ -303,7 +351,7 @@ public class Quiz {
 	}
 
 	public static void medium() {
-		User user = new User();
+
 		correctAnswers.clear();
 		incorrectAnswers.clear();
 		numberOfPointsOnLevel = 0;
@@ -510,7 +558,7 @@ public class Quiz {
 		System.out.println("You got " + correctAnswers.size() + " correct answers and " + incorrectAnswers.size()
 				+ " incorrect answers. ");
 		System.out.println("POINTS ON THIS LEVEL: " + numberOfPointsOnLevel);
-		user.printScore(numberOfPoints);
+		printScore(numberOfPoints);
 		System.out.println("CORRECT ANSWERS: ");
 		for (i = 0; i < correctAnswers.size(); i++) {
 			System.out.println(correctAnswers.get(i));
@@ -526,4 +574,12 @@ public class Quiz {
 		menu();
 		input.close();
 	}
+	
+	public static void hard(){
+		
+	
+		
+		
+	}
+
 }

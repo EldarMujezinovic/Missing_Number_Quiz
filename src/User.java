@@ -1,4 +1,11 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -15,19 +22,37 @@ public class User {
 	}
 
 	public User(String nickname, int score) {
-		if (!nicknameExist(nickname)) {
+		if (!nicknameExist(nickname) && nicknameValid(nickname)) {
 			this.nickname = nickname;
 			this.score = score;
 			users.add(this);
 			System.out.println("Your nickname is: " + nickname);
 		}
-		
+
 	}
 
-	
-	public static boolean userIsValid(String name){
-		for(int i = 0; i < users.size(); i++){
-			if(users.get(i).nickname.equals(name)){
+	public static boolean nicknameValid(String name) {
+		boolean isLetter = false;
+		for (int i = 0; i < name.length(); i++) {
+			if (Character.isLetter(name.charAt(i))) {
+				isLetter = true;
+			} else {
+				isLetter = false;
+				break;
+			}
+		}
+		if (name.length() >= 3 && isLetter) {
+			return true;
+		} else {
+			System.out.println("Nickname must have 3 or more letters and can contain only letters!");
+		}
+		return false;
+
+	}
+
+	public static boolean userIsValid(String name) {
+		for (int i = 0; i < users.size(); i++) {
+			if (users.get(i).nickname.equals(name)) {
 				return true;
 			}
 		}
@@ -44,56 +69,56 @@ public class User {
 		return isValid;
 	}
 
-	public void printScore(int score) {
-
-		if (score <= 10) {
-			System.out.println("Next time, give your best..");
-			System.out.println("TOTAL SCORE: " + score);
-		} else if (score >= 10 && score < 20) {
-			System.out.println("You can do it better!");
-			System.out.println("TOTAL SCORE: " + score);
-		} else if (score >= 30 && score < 40) {
-			System.out.println("Almost perfect!");
-			System.out.println("TOTAL SCORE: " + score);
-		} else if (score >= 40 && score < 50) {
-			System.out.println("WELL DONE!");
-			System.out.println("TOTAL SCORE: " + score);
-		} else if (score == 50) {
-			System.out.println("YOU ARE GENIUS!");
-			System.out.println("TOTAL SCORE:  " + score);
-		} else if(score > 50){
-			System.out.println("TOTAL SCORE: " + score);
-		}
-
-	}
-	
-	public void printAllUsers(){
-		for(int i = 0; i < users.size(); i++){
-			if(Character.isLetter(users.get(i).nickname.charAt(i))){
+	public void printAllUsers() {
+		for (int i = 0; i < users.size(); i++) {
+			if (Character.isLetter(users.get(i).nickname.charAt(i))) {
 				userNames.add(users.get(i).nickname);
 			}
 		}
 		System.out.println(userNames);
 	}
-	
-	public void printUserDetails(String name){
-		for(int i = 0; i < users.size(); i++){
-			if(users.get(i).nickname.equals(name)){
+
+	public void printUserDetails(String name) {
+		for (int i = 0; i < users.size(); i++) {
+			if (users.get(i).nickname.equals(name)) {
 				System.out.println(users.get(i).toString());
 				return;
 			}
 		}
 	}
-	
-	public static void increaseUserScore(String name, int amount){
-		for(int i = 0; i < users.size(); i++){
-			if(users.get(i).nickname.equals(name)){
+
+	public static void increaseUserScore(String name, int amount) {
+		for (int i = 0; i < users.size(); i++) {
+			if (users.get(i).nickname.equals(name)) {
 				users.get(i).score += amount;
 			}
 		}
 	}
-	
-	
+
+	public static void scoreList() {
+		Map<String, Integer> scoreMap = new HashMap<>();
+		for (int i = 0; i < users.size(); i++) {
+			scoreMap.put(users.get(i).nickname, users.get(i).score);
+		}
+
+		List<Entry<String, Integer>> list = new LinkedList<>(scoreMap.entrySet());
+		Collections.sort(list, new Comparator<Entry<String, Integer>>() {
+
+			@Override
+			public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
+				return -o1.getValue().compareTo(o2.getValue());
+			}
+
+		});
+		int brojac = 1;
+		for(Entry<String, Integer> item : list){
+			System.out.println(brojac + ". " + item);
+			brojac++;
+		}
+		
+
+	}
+
 	@Override
 	public String toString() {
 		return "User [nickname=" + nickname + ", score=" + score + "]";
